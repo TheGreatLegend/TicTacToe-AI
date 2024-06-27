@@ -1,4 +1,17 @@
+from os import system; system("cls")
 PGN = []
+
+def returnPGN():
+    _ = input("\nDo you want the PGN? ").lower()[0]
+    if _ in ["y", "o"]:
+        PGNstr = ""
+        for x in range(len(PGN)):
+            z = PGN[x]
+            y = z[0]+str((z[1][0]*3)+(z[1][1]+1))
+            PGNstr += y
+        print("\nPGN:", PGNstr)
+    else:
+        exit()
 
 def displayBoard(board): #OK
     print(f"""
@@ -17,6 +30,8 @@ def displayBoard(board): #OK
 +-------+-------+-------+""")
 
 def enterMove(board, move): #OK
+    if move=="PGN":
+        returnPGN(); exit()
     try: move = int(move)
     except: enterMove(board, input("\nEnter a valid (numeral) move: ")); return
     if move<=3: pos = 0, move-1
@@ -85,7 +100,7 @@ def COMP(board): #OK
         for p in chances:
             for q, r, s in [[0,1,2],[1,2,0],[2,0,1]]:
                 if p[q] == "X" and type(r) is int and type(s) is int:
-                    move = p[choice([r, s])]
+                    move = p[r if type(p[r]) is int else s]
                     if move<=3: move = 0, move-1
                     elif move<=6: move = 1, move-4
                     elif move<=9: move = 2, move-7
@@ -98,33 +113,54 @@ def COMP(board): #OK
         return
 
 def __init__(): #ALL GOOD
-    from random import choice   
-    from time import sleep as _
-    board = [[1, 2, 3], 
+    from random import choice
+    _ = input("Do you want to start from PGN? ").lower()[0]
+    if _ in ["y", "o", "x"]:
+        board = [[1, 2, 3], 
              [4, 5, 6], 
              [7, 8, 9]]
-    chance = choice([True, False])
+        pgn = input("Enter the PGN: ")
+        for w in range(0, len(pgn), 2):
+            move = int(pgn[w+1])
+            if move<=3: move = 0, move-1
+            elif move<=6: move = 1, move-4
+            elif move<=9: move = 2, move-7
+            PGN.append([pgn[w], list(move)])
+            board[move[0]][move[1]] = pgn[w]
+        chance = pgn[-2]=="X"
+    else:
+        board = [[1, 2, 3], 
+             [4, 5, 6], 
+             [7, 8, 9]]
+        chance = choice([True, False])
     # chance = True
     while len(listFree(board)) != 0:
         if chance:
+            if Wins(board, "X"): 
+                print("\n--------------------------------------------------------")
+                displayBoard(board)
+                print("\nYou Lose! ")
+                return
             displayBoard(board)
             enterMove(board, input("\nEnter your move: "))
             chance = not chance
         else:
+            if Wins(board, "O"): 
+                print("\n--------------------------------------------------------")
+                displayBoard(board)
+                print("\nYou Win... ")
+                return
             displayBoard(board)
             COMP(board)
             chance = not chance
-        if Wins(board, "X"): 
-            print("\n--------------------------------------------------------")
-            displayBoard(board)
-            print("\nYou Lose... ")
-            return
-        elif Wins(board, "O"): 
-            print("\n--------------------------------------------------------")
-            displayBoard(board)
-            print("\nYou Win! ")
-            return
     displayBoard(board)
-    print("Its a tie")
+    print("\n--------------------------------------------------------")
+    print("\nIts a tie")
+    print("\n--------------------------------------------------------")
+
+
+
 
 __init__() #RUN
+
+returnPGN()
