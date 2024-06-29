@@ -99,8 +99,8 @@ def COMP(board): #OK
                         return
         for p in chances:
             for q, r, s in [[0,1,2],[1,2,0],[2,0,1]]:
-                if p[q] == "X" and type(r) is int and type(s) is int:
-                    move = p[r if type(p[r]) is int else s]
+                if p[q] == "X" and type(p[r]) is int and type(p[s]) is int:
+                    move = p[choice([r, s])]
                     if move<=3: move = 0, move-1
                     elif move<=6: move = 1, move-4
                     elif move<=9: move = 2, move-7
